@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le numérique éducatif · Projection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : une diapositive plein écran à la fois, navigation clavier ; mêmes couleurs de repères que la page de cours. */
+:root{
+  --bg:#F3F5F4; --surface:#FFFFFF; --surface-2:#F8FAF9; --ink:#14201B; --muted:#5B6A64; --line:#E1E7E4; --heart:#1F5C4B; --heart-ink:#FFFFFF;
+  --c-c21:#C2397A; --c-bloom:#2F6FD0; --c-samr:#8A4FD8; --c-outils:#20895A; --c-rgpd:#D2463A; --c-pix:#C28410; --c-ia:#11928C;
+  --shadow:0 1px 2px rgba(20,32,27,.04),0 10px 30px -14px rgba(20,32,27,.18); --shine:rgba(255,255,255,.6);
+  --f-display:"Bricolage Grotesque","Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1412; --surface:#161E1B; --surface-2:#1B2521; --ink:#E8EFEC; --muted:#9AAAA3; --line:#26322D; --heart:#6FD0B0; --heart-ink:#0B120F;
+  --c-c21:#F08BBB; --c-bloom:#7DAAF2; --c-samr:#B996F2; --c-outils:#6CD39E; --c-rgpd:#F28C80; --c-pix:#EDBB57; --c-ia:#5ED3CC;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6); --shine:rgba(255,255,255,.12); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1412; --surface:#161E1B; --surface-2:#1B2521; --ink:#E8EFEC; --muted:#9AAAA3; --line:#26322D; --heart:#6FD0B0; --heart-ink:#0B120F;
+  --c-c21:#F08BBB; --c-bloom:#7DAAF2; --c-samr:#B996F2; --c-outils:#6CD39E; --c-rgpd:#F28C80; --c-pix:#EDBB57; --c-ia:#5ED3CC;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6); --shine:rgba(255,255,255,.12); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);-webkit-font-smoothing:antialiased;overflow:hidden}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:-.03em;line-height:1.02;margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.05em}
+
+.deck{position:fixed;left:0;right:0;top:0;bottom:58px;overflow:hidden}
+.stage{position:absolute;left:50%;top:50%;width:1400px;height:800px;transform-origin:center center}
+.slide{--p:var(--heart);position:absolute;inset:0;display:flex;flex-direction:column;gap:23.4px;padding:40px 80px 40px;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .35s ease,transform .35s ease,visibility 0s .35s}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .35s ease,transform .35s ease}
+.eyebrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.eyebrow .chip{font-family:var(--f-mono);font-size:15.2px;text-transform:uppercase;letter-spacing:.05em;padding:6px 14px;border-radius:999px;background:color-mix(in srgb,var(--p) 13%,var(--surface));color:var(--p);font-weight:500}
+.slide h2{font-size:73.6px}
+.slide h2 em{font-style:normal;color:var(--p)}
+.sub{font-size:27.2px;color:var(--muted);max-width:40em}
+.grow{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:18.0px}
+
+/* Titre */
+.title-slide{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:64.0px}
+.title-slide h1{font-size:118.4px;font-weight:800;letter-spacing:-.045em}
+.title-slide .tx{display:flex;flex-direction:column;gap:27.0px;min-width:0}
+#flower{width:100%;max-height:640px;display:block;margin:0 auto}
+.petal{cursor:pointer;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.petal path{stroke:var(--surface);stroke-width:3;filter:url(#petalShadow)}
+.petal .shine{fill:none;stroke:var(--shine);stroke-width:1.5;filter:none;stroke-linecap:round}
+.petal text{fill:var(--ink);font-family:var(--f-body);font-weight:600;font-size:15px;text-anchor:middle;pointer-events:none}
+.petal:hover,.petal:focus-visible{transform:translate(var(--dx),var(--dy))}
+.petal:focus{outline:none}
+.heart circle{fill:url(#heartGrad);stroke:var(--surface);stroke-width:4;filter:url(#heartShadow);cursor:pointer}
+.heart text{fill:var(--heart-ink);font-family:var(--f-display);font-weight:700;font-size:17px;text-anchor:middle;pointer-events:none}
+
+/* Cartes génériques */
+.cards{display:grid;gap:22.0px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:30.0px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card .big{font-family:var(--f-display);font-weight:700;font-size:36.8px;letter-spacing:-.02em;color:var(--p)}
+.card p{font-size:20.8px;color:var(--muted)}
+.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.c5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.card a{color:inherit;text-decoration-color:color-mix(in srgb,currentColor 40%,transparent);text-underline-offset:3px}
+.src{text-align:center;font-size:15px;color:var(--muted)}
+.src a{color:inherit}
+
+/* Objectif langagier : temple */
+.temple{display:flex;flex-direction:column;gap:12.6px;max-width:1200px;width:100%;margin:0 auto}
+.roof{background:var(--heart);color:var(--heart-ink);border-radius:22px 22px 10px 10px;padding:21.6px;text-align:center;font-family:var(--f-display);font-weight:700;font-size:38.4px;letter-spacing:-.02em;box-shadow:var(--shadow)}
+.roof small{display:block;font-family:var(--f-body);font-weight:500;font-size:17.6px;opacity:.85;letter-spacing:0;margin-top:4px}
+.pillars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16.0px}
+.pillar{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:23.4px 14px;text-align:center;box-shadow:var(--shadow)}
+.pillar b{display:block;font-family:var(--f-display);font-size:30.4px;letter-spacing:-.02em;color:var(--heart)}
+.pillar span{font-size:17.6px;color:var(--muted)}
+.base{background:color-mix(in srgb,var(--heart) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--heart) 30%,var(--line));border-radius:10px 10px 22px 22px;padding:18.0px;text-align:center;font-weight:600;font-size:25.6px}
+.base span{color:var(--muted);font-weight:500}
+.footnote{font-size:21.6px;color:var(--muted);text-align:center}
+.footnote strong{color:var(--ink)}
+
+/* Usages faibles */
+.weak{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18.0px}
+.weak .card{flex-direction:row;align-items:flex-start;gap:14px}
+.weak .x{flex:none;width:40.0px;height:40.0px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--c-rgpd) 14%,var(--surface));color:var(--c-rgpd);font-weight:700;font-size:19.2px}
+.weak b{display:block;font-size:21.6px;color:var(--ink)}
+.weak span{font-size:16.8px;color:var(--muted)}
+
+/* Bloom : escalier */
+.stairs{display:grid;height:360px;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;gap:14.0px;max-width:1250px;width:100%;margin:0 auto}
+.step{border-radius:16px 16px 6px 6px;background:color-mix(in srgb,var(--c-bloom) var(--w),var(--surface));border:1px solid color-mix(in srgb,var(--c-bloom) 30%,var(--line));padding:18.0px;display:flex;flex-direction:column;justify-content:flex-start;gap:6px;min-width:0;box-shadow:var(--shadow)}
+.step .n{font-family:var(--f-mono);font-size:16.0px;color:var(--c-bloom)}
+.step b{font-family:var(--f-display);font-size:25.6px;letter-spacing:-.02em}
+.step .tag{align-self:flex-start;font-family:var(--f-mono);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.step i{font-size:15.7px;color:var(--muted)}
+.found{max-width:1250px;width:100%;margin:0 auto;border-radius:14px;padding:16.2px;text-align:center;font-weight:600;font-size:24.0px;background:var(--ink);color:var(--bg)}
+
+/* 4C */
+.four{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22.0px;max-width:1150px;width:100%;margin:0 auto}
+.four .card{flex-direction:row;align-items:center;gap:26.0px}
+.four .letter{flex:none;width:100.0px;height:100.0px;border-radius:24px;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:57.6px;background:var(--c-c21);color:var(--surface)}
+.four b{display:block;font-family:var(--f-display);font-size:36.8px;letter-spacing:-.02em}
+.four span{font-size:19.2px;color:var(--muted)}
+
+/* SAMR */
+.samr{display:grid;grid-template-columns:minmax(0,.9fr) repeat(3,minmax(0,1fr));gap:10.0px;max-width:1350px;width:100%;margin:0 auto}
+.samr .h{font-family:var(--f-mono);font-size:14.4px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:0 10px}
+.samr .deg{border-radius:14px;padding:18.0px;background:color-mix(in srgb,var(--c-samr) var(--w),var(--surface));display:flex;flex-direction:column;gap:2px}
+.samr .deg b{font-family:var(--f-display);font-size:28.0px;letter-spacing:-.02em;color:var(--c-samr)}
+.samr .deg i{font-size:16.3px;font-weight:600}
+.samr .ex{border-radius:14px;padding:18.0px;background:var(--surface);border:1px solid var(--line);font-size:17.3px;color:var(--ink)}
+.samr .ex.weakx{color:var(--muted);font-style:italic}
+.star{max-width:1350px;width:100%;margin:0 auto;font-size:20.0px;border-left:4px solid var(--c-samr);padding:6px 0 6px 16px;color:var(--muted)}
+.star strong{color:var(--ink)}
+
+/* Outils */
+.tools .card .big{font-size:26px}
+.flow{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;align-items:center}
+.flow span{font-weight:600;font-size:23.2px;padding:10px 20px;border-radius:999px;background:color-mix(in srgb,var(--c-outils) 13%,var(--surface));color:var(--c-outils)}
+.flow i{color:var(--muted);font-style:normal;font-size:1.4rem}
+
+/* RGPD */
+.gauge{max-width:1150px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.gauge .bar{height:18.0px;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--c-rgpd) 12%,var(--surface)),var(--c-rgpd))}
+.gauge .labels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.gauge .labels div{display:flex;flex-direction:column;gap:2px}
+.gauge .labels div:nth-child(2){text-align:center}
+.gauge .labels div:nth-child(3){text-align:right}
+.gauge b{font-family:var(--f-display);font-size:30.4px;letter-spacing:-.02em}
+.gauge span{font-size:16.8px;color:var(--muted)}
+
+/* CRCN */
+.crcn{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14.0px;max-width:1400px;width:100%;margin:0 auto}
+.dom{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16.0px;display:flex;flex-direction:column;gap:6px;min-width:0;box-shadow:var(--shadow)}
+.dom .dt{font-weight:700;font-size:17.6px;display:flex;gap:8px;align-items:center;min-height:2.6em}
+.dom .dt span{flex:none;font-family:var(--f-mono);font-size:.8em;width:1.7em;height:1.7em;display:grid;place-items:center;border-radius:7px;background:var(--c-pix);color:var(--surface)}
+.dom ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.dom li{font-size:15.2px;padding:6px 8px;border-radius:9px;color:var(--muted)}
+.dom li.hl{background:color-mix(in srgb,var(--c-pix) 24%,var(--surface));color:var(--ink);font-weight:600}
+.legend{text-align:center;font-size:17.6px;color:var(--muted)}
+.legend mark{background:color-mix(in srgb,var(--c-pix) 24%,var(--surface));color:var(--ink);padding:2px 8px;border-radius:6px;font-weight:600}
+
+/* IA */
+.ia-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:34.0px;align-items:stretch;max-width:1350px;width:100%;margin:0 auto}
+.rules{display:flex;flex-direction:column;gap:10.8px}
+.rule{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14.4px 16px;box-shadow:var(--shadow)}
+.rule b{flex:none;font-family:var(--f-display);font-size:33.6px;color:var(--c-ia);min-width:2.6em;letter-spacing:-.02em}
+.rule span{font-size:18.4px}
+.frugal{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:26.0px;display:flex;flex-direction:column;gap:12px}
+.frugal .t{font-family:var(--f-display);font-weight:700;font-size:30.4px;letter-spacing:-.02em}
+.dots-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+.dots{display:flex;flex-wrap:wrap;gap:5px}
+.dots i{width:16.0px;height:16.0px;border-radius:50%;background:var(--c-rgpd);opacity:.85}
+.dots.g i{width:30.0px;height:30.0px;background:var(--c-ia)}
+.dots-row .lbl{font-weight:600;font-size:17.6px;text-align:right}
+.dots-row .lbl small{display:block;font-weight:400;color:var(--muted)}
+.frugal .note{font-size:17.6px;color:var(--muted)}
+.frugal .note strong{color:var(--ink)}
+
+/* Séquence */
+.cycle-wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:64.0px;align-items:center;max-width:1300px;width:100%;margin:0 auto}
+#cycle{width:100%;max-height:558.0px;display:block}
+#cycle text{font-family:var(--f-body);font-weight:600;font-size:15px;text-anchor:middle;fill:var(--ink)}
+#cycle .num{font-family:var(--f-mono);font-size:12px;font-weight:500;fill:var(--heart-ink)}
+.cycle-side{display:flex;flex-direction:column;gap:14.4px}
+.cycle-side .card .big{font-size:27.2px}
+
+/* Questions */
+.q8{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16.0px;max-width:1400px;width:100%;margin:0 auto}
+.q8 .card{border-top:6px solid var(--p);padding:20.0px}
+.q8 .mono{font-size:13.1px;color:var(--p);font-weight:500}
+.q8 p{color:var(--ink);font-weight:600;font-size:18.4px}
+
+/* Barre de navigation */
+.bar-nav{position:fixed;left:0;right:0;bottom:0;padding:10px 40.0px calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:5}
+.pips{flex:1;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-width:0}
+.pip{width:34.0px;height:8px;border-radius:999px;border:0;background:color-mix(in srgb,var(--p) 30%,var(--line));cursor:pointer;padding:0;transition:background .2s,width .2s}
+.pip.on{background:var(--p);width:56.0px}
+.navb{font:inherit;font-weight:600;font-size:.95rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:var(--shadow)}
+.navb:disabled{opacity:.35;cursor:default}
+.count{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);min-width:3.6em;text-align:center;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--heart);outline-offset:3px;border-radius:8px}
+
+@media (prefers-reduced-motion:reduce){.slide,.petal{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="deck" id="deck"><div class="stage" id="stage">
+
+<!-- 0 · Titre -->
+<section class="slide" data-c="--heart">
+  <div class="title-slide grow">
+    <div class="tx">
+      <div class="eyebrow"><span class="chip">CCNUM · M2 MEEF Anglais</span></div>
+      <h1>Le numérique éducatif</h1>
+      <p class="sub">Au centre, l'objectif langagier. Autour, sept repères.</p>
+    </div>
+    <svg id="flower" viewBox="-215 -215 430 430" role="group" aria-label="Sommaire : cliquez sur un repère"></svg>
+  </div>
+</section>
+
+<!-- 1 · Objectif langagier -->
+<section class="slide" data-c="--heart">
+  <div class="eyebrow"><span class="chip">Le cœur</span></div>
+  <h2>L'objectif <em>langagier</em> d'abord</h2>
+  <div class="grow">
+    <div class="temple">
+      <div class="roof">Une tâche qui a du sens<small>approche orientée vers l'action · programmes de langues vivantes 2025</small></div>
+      <div class="pillars">
+        <div class="pillar"><b>Réception</b><span>comprendre l'oral et l'écrit</span></div>
+        <div class="pillar"><b>Production</b><span>s'exprimer en continu</span></div>
+        <div class="pillar"><b>Interaction · Médiation</b><span>échanger, reformuler pour l'autre</span></div>
+      </div>
+      <div class="base">Outils de la langue <span>· lexique · grammaire · phonologie</span></div>
+    </div>
+    <p class="footnote">Le numérique sert l'une de ces activités, ou l'entraînement des outils. <strong>Il n'est jamais l'objectif.</strong></p>
+  </div>
+</section>
+
+<!-- 2 · Usages faibles -->
+<section class="slide" data-c="--c-rgpd">
+  <div class="eyebrow"><span class="chip">Le cœur</span></div>
+  <h2>Des usages <em>faibles</em></h2>
+  <div class="grow">
+    <div class="weak">
+      <div class="card"><span class="x">✕</span><div><b>Le diaporama</b><span>qui remplace le tableau</span></div></div>
+      <div class="card"><span class="x">✕</span><div><b>L'exerciseur de fin d'heure</b><span>sans lien avec la tâche finale</span></div></div>
+      <div class="card"><span class="x">✕</span><div><b>« Find information about… »</b><span>copier, coller, en français</span></div></div>
+      <div class="card"><span class="x">✕</span><div><b>La vidéo récitée</b><span>traduite, apprise, lue</span></div></div>
+      <div class="card"><span class="x">✕</span><div><b>Le pad « dépôt »</b><span>une image chacun, rien ensuite</span></div></div>
+      <div class="card"><span class="x">✕</span><div><b>Le texte tapé, rendu, noté</b><span>sans brouillon ni réécriture</span></div></div>
+      <div class="card"><span class="x">✕</span><div><b>Le nuage de mots</b><span>joli, jamais réutilisé</span></div></div>
+    </div>
+    <p class="footnote">Point commun : <strong>on ne peut pas formuler l'objectif langagier.</strong></p>
+  </div>
+</section>
+
+<!-- 3 · Bloom -->
+<section class="slide" data-c="--c-bloom">
+  <div class="eyebrow"><span class="chip">Repère 1</span></div>
+  <h2>La taxonomie de <em>Bloom</em></h2>
+  <div class="grow">
+    <div class="stairs">
+      <div class="step" style="height:40%;--w:8%"><span class="n">1</span><b>Se souvenir</b><span class="tag">Exerciseur</span><i>lexique de la pub</i></div>
+      <div class="step" style="height:50%;--w:14%"><span class="n">2</span><b>Comprendre</b><span class="tag">Exerciseur</span><i>vraies publicités</i></div>
+      <div class="step" style="height:60%;--w:20%"><span class="n">3</span><b>Appliquer</b><span class="tag">Écrit</span><i>slogans, impératif</i></div>
+      <div class="step" style="height:70%;--w:26%"><span class="n">4</span><b>Analyser</b><span class="tag">Écrit</span><i>comparer deux pubs</i></div>
+      <div class="step" style="height:82%;--w:32%"><span class="n">5</span><b>Évaluer</b><span class="tag">Vidéo</span><i>retours entre pairs</i></div>
+      <div class="step" style="height:94%;--w:40%"><span class="n">6</span><b>Créer</b><span class="tag">Vidéo</span><i>sa propre publicité</i></div>
+    </div>
+    <div class="found">Socle : les outils de la langue, apportés et entraînés</div>
+    <p class="footnote">On ne crée pas en anglais <strong>sans les outils de la langue pour le faire.</strong></p>
+  </div>
+</section>
+
+<!-- 4 · 21e siècle -->
+<section class="slide" data-c="--c-c21">
+  <div class="eyebrow"><span class="chip">Repère 2</span></div>
+  <h2>Les compétences du <em>21e siècle</em></h2>
+  <div class="grow">
+    <div class="four">
+      <div class="card"><span class="letter">C</span><div><b>Communication</b><span>tenir compte du destinataire</span></div></div>
+      <div class="card"><span class="letter">C</span><div><b>Collaboration</b><span>construire ensemble</span></div></div>
+      <div class="card"><span class="letter">C</span><div><b>Créativité</b><span>produire, faire des choix</span></div></div>
+      <div class="card"><span class="letter">C</span><div><b>Esprit critique</b><span>analyser, vérifier, justifier</span></div></div>
+    </div>
+    <p class="footnote">Ils ne s'enseignent pas à part : <strong>ils naissent du travail en amont.</strong></p>
+  </div>
+</section>
+
+<!-- 5 · SAMR -->
+<section class="slide" data-c="--c-samr">
+  <div class="eyebrow"><span class="chip">Repère 3</span></div>
+  <h2>Le modèle <em>SAMR</em></h2>
+  <div class="grow">
+    <div class="samr">
+      <span class="h">Degré</span><span class="h">Exerciseur</span><span class="h">Vidéo</span><span class="h">Écrit</span>
+      <div class="deg" style="--w:8%"><b>Substitution</b><i>exactement pareil</i></div>
+      <div class="ex">Le QCM papier, en ligne</div>
+      <div class="ex">Se filmer en récitant</div>
+      <div class="ex">Taper au lieu d'écrire</div>
+      <div class="deg" style="--w:16%"><b>Augmentation</b><i>pareil, mais mieux</i></div>
+      <div class="ex">Correction immédiate, on recommence</div>
+      <div class="ex">Se revoir, refilmer</div>
+      <div class="ex">Commentaires, 2e version</div>
+      <div class="deg" style="--w:26%"><b>Modification</b><i>la tâche change</i></div>
+      <div class="ex">Les élèves fabriquent le QCM</div>
+      <div class="ex">Grille, retour d'un pair, nouvelle vidéo</div>
+      <div class="ex">Relecture croisée, réécriture</div>
+      <div class="deg" style="--w:38%"><b>Redéfinition*</b><i>impossible sans numérique</i></div>
+      <div class="ex weakx">Rarement utile</div>
+      <div class="ex">Un tutoriel que d'autres classes suivent seules</div>
+      <div class="ex">Une histoire interactive à embranchements</div>
+    </div>
+    <p class="star">* <strong>C'est le travail en amont qui redéfinit la tâche</strong> : modèles, collaboration, brouillons, retours, réécriture. Produit par une IA : apport langagier nul.</p>
+  </div>
+</section>
+
+<!-- 6 · Outils -->
+<section class="slide" data-c="--c-outils">
+  <div class="eyebrow"><span class="chip">Repère 4</span></div>
+  <h2>Les <em>outils</em> communs</h2>
+  <div class="grow tools">
+    <div class="cards c5">
+      <div class="card"><span class="big">GAR</span><p>ressources du ministère ou de la collectivité, via l'ENT</p></div>
+      <div class="card"><span class="big">Apps Éducation</span><p>outils du ministère</p></div>
+      <div class="card"><span class="big">La Digitale</span><p>libres, sans compte élève</p></div>
+      <div class="card"><span class="big">LearningApps</span><p>pour les exerciseurs</p></div>
+      <div class="card"><span class="big">IA générative</span><p>parcours guidés et différenciés</p></div>
+    </div>
+    <div class="flow"><span>Faire émerger</span><i>→</i><span>Mutualiser</span><i>→</i><span>Produire</span><i>→</i><span>Partager</span></div>
+    <p class="footnote">Peu d'outils, <strong>bien maîtrisés.</strong></p>
+  </div>
+</section>
+
+<!-- 7 · RGPD -->
+<section class="slide" data-c="--c-rgpd">
+  <div class="eyebrow"><span class="chip">Repère 5</span></div>
+  <h2>Le <em>RGPD</em></h2>
+  <div class="grow">
+    <div class="gauge">
+      <div class="bar"></div>
+      <div class="labels">
+        <div><b>Exerciseur</b><span>risque faible sans compte</span></div>
+        <div><b>Écrit</b><span>un texte signé reste une donnée</span></div>
+        <div><b>Vidéo</b><span>visage et voix : le plus sensible</span></div>
+      </div>
+    </div>
+    <div class="cards c4">
+      <div class="card"><span class="big">Chef d'établissement</span><p>responsable des traitements</p></div>
+      <div class="card"><span class="big">DPO académique</span><p>conseille</p></div>
+      <div class="card"><span class="big">Familles</span><p>informées</p></div>
+      <div class="card"><span class="big">Diffusion publique</span><p>autorisation écrite des parents · <a href="https://eduscol.education.gouv.fr/sites/default/files/document/autorisation-captation-utilisation-image-voix-mineur-concours-des-dix-motspdf-101859.pdf" target="_blank" rel="noopener">modèle Éduscol</a></p></div>
+    </div>
+    <p class="footnote">Plus la production sort de la classe, <strong>plus le cadre doit être solide.</strong></p>
+  </div>
+</section>
+
+<!-- 8 · Pix -->
+<section class="slide" data-c="--c-pix">
+  <div class="eyebrow"><span class="chip">Repère 6</span></div>
+  <h2><em>Pix</em> et le CRCN</h2>
+  <div class="grow">
+    <div class="crcn">
+      <div class="dom"><p class="dt"><span>1</span>Information et données</p><ul><li class="hl">1.1 Rechercher, veille</li><li>1.2 Gérer des données</li><li>1.3 Traiter des données</li></ul></div>
+      <div class="dom"><p class="dt"><span>2</span>Communication et collaboration</p><ul><li class="hl">2.1 Interagir</li><li class="hl">2.2 Partager et publier</li><li class="hl">2.3 Collaborer</li><li>2.4 S'insérer dans le monde numérique</li></ul></div>
+      <div class="dom"><p class="dt"><span>3</span>Création de contenus</p><ul><li class="hl">3.1 Documents textuels</li><li class="hl">3.2 Documents multimédia</li><li class="hl">3.3 Adapter à la finalité</li><li>3.4 Programmer</li></ul></div>
+      <div class="dom"><p class="dt"><span>4</span>Protection et sécurité</p><ul><li>4.1 Sécuriser l'environnement</li><li>4.2 Données personnelles</li><li>4.3 Santé, bien-être, environnement</li></ul></div>
+      <div class="dom"><p class="dt"><span>5</span>Environnement numérique</p><ul><li>5.1 Résoudre des problèmes techniques</li><li>5.2 Évoluer dans un environnement numérique</li></ul></div>
+    </div>
+    <p class="legend"><mark>Surligné</mark> : ce qui se prête bien à un cours de langue</p>
+    <p class="src">Le CRCN s'appuie sur le cadre européen <a href="https://eduscol.education.fr/document/20386/download" target="_blank" rel="noopener">DigComp 2.1</a>, dont les niveaux de maîtrise suivent la taxonomie de Bloom.</p>
+  </div>
+</section>
+
+<!-- 9 · IA -->
+<section class="slide" data-c="--c-ia">
+  <div class="eyebrow"><span class="chip">Repère 7</span></div>
+  <h2>L'<em>IA</em> générative : qui fait le travail langagier ?</h2>
+  <div class="grow">
+    <div class="ia-grid">
+      <div class="rules">
+        <div class="rule"><b>4e</b><span>usage autonome par les élèves à partir de la 4e</span></div>
+        <div class="rule"><b>Règles</b><span>un usage non autorisé est une fraude ; l'enseignant fixe le cadre</span></div>
+        <div class="rule"><b>5</b><span>principes : plus-value, données, environnement, transparence, esprit critique</span></div>
+        <div class="rule"><b>Pix</b><span>formation des élèves de 4e et de Seconde</span></div>
+      </div>
+      <div class="frugal">
+        <p class="t">Frugalité</p>
+        <div class="dots-row"><div class="dots" id="dots35"></div><p class="lbl">35 requêtes<small>une par élève</small></p></div>
+        <div class="dots-row"><div class="dots g" id="dots9"></div><p class="lbl">9 requêtes<small>une par groupe</small></p></div>
+        <p class="note">Une requête par groupe, <strong>rédigée ensemble en anglais</strong> : plus sobre, et plus de langue.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · Séquence -->
+<section class="slide" data-c="--heart">
+  <div class="eyebrow"><span class="chip">Synthèse</span></div>
+  <h2>Une séquence qui fait <em>progresser</em></h2>
+  <div class="grow">
+    <div class="cycle-wrap">
+      <svg id="cycle" viewBox="-300 -215 600 440" role="img" aria-label="Cinq phases en cycle : découverte et analyse, entraînement, fixation, évaluation, remédiation"></svg>
+      <div class="cycle-side">
+        <div class="card"><span class="big">Courte</span><p>quelques semaines tout au plus</p></div>
+        <div class="card"><span class="big">Des allers-retours</span><p>les phases reviennent régulièrement</p></div>
+        <div class="card"><span class="big">Visible</span><p>l'élève se voit progresser</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · Huit questions -->
+<section class="slide" data-c="--heart">
+  <div class="eyebrow"><span class="chip">Synthèse</span></div>
+  <h2>Huit questions pour votre <em>séquence</em></h2>
+  <div class="grow">
+    <div class="q8">
+      <div class="card" style="--p:var(--heart)"><span class="mono">Cœur</span><p>Quel objectif langagier ?</p></div>
+      <div class="card" style="--p:var(--c-bloom)"><span class="mono">Bloom</span><p>Quel niveau, et quels outils de la langue avant ?</p></div>
+      <div class="card" style="--p:var(--c-c21)"><span class="mono">21e siècle</span><p>Quels « C », venus de quelles étapes ?</p></div>
+      <div class="card" style="--p:var(--c-samr)"><span class="mono">SAMR</span><p>Qu'est-ce que l'outil change à la tâche ?</p></div>
+      <div class="card" style="--p:var(--c-outils)"><span class="mono">Outils</span><p>Le plus simple, déjà connu ?</p></div>
+      <div class="card" style="--p:var(--c-rgpd)"><span class="mono">RGPD</span><p>Quelles données, et où ?</p></div>
+      <div class="card" style="--p:var(--c-pix)"><span class="mono">Pix</span><p>Quelles compétences nommer ?</p></div>
+      <div class="card" style="--p:var(--c-ia)"><span class="mono">IA</span><p>Qui fait le travail langagier ? Combien de requêtes ?</p></div>
+    </div>
+  </div>
+</section>
+
+</div></div>
+
+<nav class="bar-nav" aria-label="Navigation des diapositives">
+  <button class="navb" id="prev" type="button" aria-label="Diapositive précédente">←</button>
+  <div class="pips" id="pips"></div>
+  <span class="count" id="count">1 / 12</span>
+  <button class="navb" id="next" type="button" aria-label="Diapositive suivante">→</button>
+  <button class="navb" id="fs" type="button" aria-label="Plein écran">⛶</button>
+</nav>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll(".slide"));
+  var pips=document.getElementById("pips"), cur=0;
+  slides.forEach(function(s,i){
+    s.style.setProperty("--p","var("+s.dataset.c+")");
+    var b=document.createElement("button");b.className="pip";b.type="button";
+    b.style.setProperty("--p","var("+s.dataset.c+")");
+    b.setAttribute("aria-label","Diapositive "+(i+1));
+    b.addEventListener("click",function(){show(i)});
+    pips.appendChild(b);
+  });
+  function show(i){
+    cur=Math.max(0,Math.min(slides.length-1,i));
+    slides.forEach(function(s,k){s.classList.toggle("on",k===cur);s.setAttribute("aria-hidden",k===cur?"false":"true")});
+    [].forEach.call(pips.children,function(p,k){p.classList.toggle("on",k===cur)});
+    document.getElementById("count").textContent=(cur+1)+" / "+slides.length;
+    document.getElementById("prev").disabled=cur===0;
+    document.getElementById("next").disabled=cur===slides.length-1;
+    slides[cur].scrollTop=0;
+  }
+  document.getElementById("prev").addEventListener("click",function(){show(cur-1)});
+  document.getElementById("next").addEventListener("click",function(){show(cur+1)});
+  document.addEventListener("keydown",function(e){
+    if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){e.preventDefault();show(cur+1)}
+    else if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();show(cur-1)}
+    else if(e.key==="Home"){show(0)} else if(e.key==="End"){show(slides.length-1)}
+  });
+  var tx=null;
+  document.addEventListener("touchstart",function(e){tx=e.touches[0].clientX},{passive:true});
+  document.addEventListener("touchend",function(e){if(tx===null)return;var d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>60)show(cur+(d<0?1:-1));tx=null});
+  document.getElementById("fs").addEventListener("click",function(){
+    try{ if(!document.fullscreenElement){var r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen(); if(r&&r.catch)r.catch(function(){});} else {document.exitFullscreen();} }catch(e){}
+  });
+
+  // Fleur
+  var NS="http://www.w3.org/2000/svg", svg=document.getElementById("flower");
+  var petals=[["Bloom","--c-bloom",3],["21e siècle","--c-c21",4],["SAMR","--c-samr",5],["Outils","--c-outils",6],["RGPD","--c-rgpd",7],["Pix · CRCN","--c-pix",8],["IA","--c-ia",9]];
+  var defs=document.createElementNS(NS,"defs");
+  defs.innerHTML='<filter id="petalShadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#0b1a14" flood-opacity=".16"/></filter>'+
+    '<filter id="heartShadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#0b1a14" flood-opacity=".28"/></filter>'+
+    '<radialGradient id="heartGrad" cx="38%" cy="32%" r="75%"><stop offset="0" style="stop-color:color-mix(in srgb,var(--heart) 70%,#fff)"/><stop offset="1" style="stop-color:var(--heart)"/></radialGradient>';
+  svg.appendChild(defs);
+  var petalPath="M0,-66 C46,-82 58,-150 0,-200 C-58,-150 -46,-82 0,-66 Z";
+  petals.forEach(function(p,i){
+    var ang=i*360/petals.length, rad=ang*Math.PI/180, cv="var("+p[1]+")";
+    var lg=document.createElementNS(NS,"linearGradient");
+    lg.setAttribute("id","pg"+i);lg.setAttribute("gradientUnits","userSpaceOnUse");
+    lg.setAttribute("x1","0");lg.setAttribute("y1","-66");lg.setAttribute("x2","0");lg.setAttribute("y2","-200");
+    lg.innerHTML='<stop offset="0" style="stop-color:color-mix(in srgb,'+cv+' 10%,var(--surface))"/><stop offset="1" style="stop-color:color-mix(in srgb,'+cv+' 42%,var(--surface))"/>';
+    defs.appendChild(lg);
+    var g=document.createElementNS(NS,"g");g.setAttribute("class","petal");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label",p[0]);
+    g.style.setProperty("--dx",(Math.sin(rad)*7).toFixed(1)+"px");g.style.setProperty("--dy",(-Math.cos(rad)*7).toFixed(1)+"px");
+    var path=document.createElementNS(NS,"path");path.setAttribute("d",petalPath);path.setAttribute("transform","rotate("+ang+")");path.setAttribute("fill","url(#pg"+i+")");g.appendChild(path);
+    var vein=document.createElementNS(NS,"path");vein.setAttribute("class","shine");vein.setAttribute("d","M-26,-98 C-38,-126 -34,-158 -16,-180");vein.setAttribute("transform","rotate("+ang+")");g.appendChild(vein);
+    var t=document.createElementNS(NS,"text");t.setAttribute("x",(Math.sin(rad)*140).toFixed(1));t.setAttribute("y",(-Math.cos(rad)*140+5).toFixed(1));t.textContent=p[0];g.appendChild(t);
+    g.addEventListener("click",function(){show(p[2])});
+    g.addEventListener("keydown",function(e){if(e.key==="Enter"){e.stopPropagation();show(p[2])}});
+    svg.appendChild(g);
+  });
+  var h=document.createElementNS(NS,"g");h.setAttribute("class","heart");h.setAttribute("tabindex","0");h.setAttribute("role","button");h.setAttribute("aria-label","Objectif langagier");
+  var c=document.createElementNS(NS,"circle");c.setAttribute("r","62");h.appendChild(c);
+  [["Objectif",-4],["langagier",18]].forEach(function(a){var t=document.createElementNS(NS,"text");t.setAttribute("y",a[1]);t.textContent=a[0];h.appendChild(t)});
+  h.addEventListener("click",function(){show(1)});
+  svg.appendChild(h);
+
+  // Points de frugalité
+  function dots(id,n){var el=document.getElementById(id);for(var i=0;i<n;i++)el.appendChild(document.createElement("i"))}
+  dots("dots35",35);dots("dots9",9);
+
+  // Cycle de séquence
+  var cy=document.getElementById("cycle");
+  var phases=["Découverte et analyse","Entraînement","Fixation de la langue","Évaluation","Remédiation"];
+  var R=185, n=phases.length;
+  var cdefs=document.createElementNS(NS,"defs");
+  cdefs.innerHTML='<marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" style="fill:var(--muted)"/></marker>';
+  cy.appendChild(cdefs);
+  var ring=document.createElementNS(NS,"circle");ring.setAttribute("r",R);ring.setAttribute("fill","none");ring.setAttribute("style","stroke:var(--line);stroke-width:2;stroke-dasharray:4 6");cy.appendChild(ring);
+  for(var i=0;i<n;i++){
+    var a1=(i/n)*2*Math.PI-Math.PI/2+0.32, a2=((i+1)/n)*2*Math.PI-Math.PI/2-0.32;
+    var arc=document.createElementNS(NS,"path");
+    arc.setAttribute("d","M"+(R*Math.cos(a1)).toFixed(1)+","+(R*Math.sin(a1)).toFixed(1)+" A"+R+","+R+" 0 0 1 "+(R*Math.cos(a2)).toFixed(1)+","+(R*Math.sin(a2)).toFixed(1));
+    arc.setAttribute("fill","none");arc.setAttribute("style","stroke:var(--heart);stroke-width:3");arc.setAttribute("marker-end","url(#arr)");
+    cy.appendChild(arc);
+  }
+  var back=document.createElementNS(NS,"path");
+  var ra=(3/n)*2*Math.PI-Math.PI/2, rb=(1/n)*2*Math.PI-Math.PI/2;
+  back.setAttribute("d","M"+(R*.62*Math.cos(ra)).toFixed(1)+","+(R*.62*Math.sin(ra)).toFixed(1)+" Q0,0 "+(R*.62*Math.cos(rb)).toFixed(1)+","+(R*.62*Math.sin(rb)).toFixed(1));
+  back.setAttribute("fill","none");back.setAttribute("style","stroke:var(--c-ia);stroke-width:2.5;stroke-dasharray:6 5");back.setAttribute("marker-end","url(#arr)");
+  cy.appendChild(back);
+  var mid=document.createElementNS(NS,"text");mid.setAttribute("x","-28");mid.setAttribute("y","-14");mid.setAttribute("style","font-size:12px;fill:var(--muted);font-weight:500");mid.textContent="allers-retours";cy.appendChild(mid);
+  phases.forEach(function(lbl,i){
+    var a=(i/n)*2*Math.PI-Math.PI/2, x=R*Math.cos(a), y=R*Math.sin(a);
+    var g=document.createElementNS(NS,"g");
+    var bg=document.createElementNS(NS,"rect");var w=lbl.length*8.4+46;
+    bg.setAttribute("x",(x-w/2).toFixed(1));bg.setAttribute("y",(y-19).toFixed(1));bg.setAttribute("width",w.toFixed(1));bg.setAttribute("height","38");bg.setAttribute("rx","19");
+    bg.setAttribute("style","fill:var(--surface);stroke:color-mix(in srgb,var(--heart) 35%,var(--line));stroke-width:1.5");g.appendChild(bg);
+    var cc=document.createElementNS(NS,"circle");cc.setAttribute("cx",(x-w/2+19).toFixed(1));cc.setAttribute("cy",y.toFixed(1));cc.setAttribute("r","11");cc.setAttribute("style","fill:var(--heart)");g.appendChild(cc);
+    var nn=document.createElementNS(NS,"text");nn.setAttribute("class","num");nn.setAttribute("x",(x-w/2+19).toFixed(1));nn.setAttribute("y",(y+4).toFixed(1));nn.textContent=i+1;g.appendChild(nn);
+    var t=document.createElementNS(NS,"text");t.setAttribute("x",(x+11).toFixed(1));t.setAttribute("y",(y+5).toFixed(1));t.textContent=lbl;g.appendChild(t);
+    cy.appendChild(g);
+  });
+
+  var stage=document.getElementById("stage"), deck=document.getElementById("deck");
+  function fit(){var sc=Math.min(deck.clientWidth/1400,deck.clientHeight/800);stage.style.transform="translate(-50%,-50%) scale("+sc+")";}
+  window.addEventListener("resize",fit);fit();
+  show(0);
+})();
+</script>
+</body>
+</html>
