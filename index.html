@@ -175,6 +175,24 @@ p{margin:0}
 .q8 .mono{font-size:13.1px;color:var(--p);font-weight:500}
 .q8 p{color:var(--ink);font-weight:600;font-size:18.4px}
 
+.parts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;max-width:1240px;width:100%;margin:0 auto}
+.part{position:relative;background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--p);border-radius:22px;box-shadow:var(--shadow);padding:26px 22px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.part .n{font-family:var(--f-display);font-weight:800;font-size:54px;line-height:1;color:var(--p)}
+.part .who{align-self:flex-start;font-family:var(--f-mono);font-size:13px;text-transform:uppercase;letter-spacing:.04em;padding:4px 12px;border-radius:999px;background:color-mix(in srgb,var(--p) 13%,var(--surface));color:var(--p)}
+.part b{font-family:var(--f-display);font-size:30px;letter-spacing:-.02em}
+.part p{font-size:18px;color:var(--muted)}
+.g3{display:grid;grid-template-columns:1fr 1.25fr .9fr;gap:18px;max-width:1240px;width:100%;margin:0 auto}
+.gph{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:22px 24px;min-width:0}
+.gt{font-family:var(--f-display);font-weight:700;font-size:28px;letter-spacing:-.02em;display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.gt span{font-family:var(--f-mono);font-size:16px;font-weight:500;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--ink);color:var(--bg)}
+.gph ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.gph li{display:flex;gap:12px;align-items:center;font-size:19px;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
+.gph li i{font-style:normal;font-family:var(--f-mono);font-size:14px;width:28px;height:28px;flex:none;display:grid;place-items:center;border-radius:50%;border:1.5px solid var(--line);color:var(--muted)}
+.levels{display:flex;justify-content:center;align-items:center;gap:16px}
+.levels .lv{font-weight:600;font-size:20px;padding:10px 22px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.levels .lv.x{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.levels .arrow{font-size:24px;color:var(--muted)}
+.cta{display:inline-block;font-weight:600;font-size:18px;text-decoration:none;padding:12px 24px;border-radius:999px;background:var(--ink);color:var(--bg)}
 /* Barre de navigation */
 .bar-nav{position:fixed;left:0;right:0;bottom:0;padding:10px 40.0px calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:5}
 .pips{flex:1;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-width:0}
@@ -200,6 +218,35 @@ p{margin:0}
       <p class="sub">Au centre, l'objectif langagier. Autour, sept repères.</p>
     </div>
     <svg id="flower" viewBox="-215 -215 430 430" role="group" aria-label="Sommaire : cliquez sur un repère"></svg>
+  </div>
+</section>
+
+<!-- Préambule A · Travail attendu -->
+<section class="slide" data-c="--ink">
+  <div class="eyebrow"><span class="chip">Préambule</span></div>
+  <h2>Ce que vous allez <em>produire</em></h2>
+  <div class="grow">
+    <div class="parts">
+      <div class="part" style="--p:var(--c-bloom)"><span class="n">1</span><span class="who">En groupe</span><b>Préparer</b><p>la séquence et trois usages : s'entraîner, acquérir, produire</p></div>
+      <div class="part" style="--p:var(--c-c21)"><span class="n">2</span><span class="who">Individuel</span><b>Approfondir</b><p>un usage chacun : RGPD, mise en œuvre, plan B, Bloom · SAMR · CRCN · 4C</p></div>
+      <div class="part" style="--p:var(--c-samr)"><span class="n">3</span><span class="who">En groupe</span><b>Vérifier</b><p>cohérence, plus-value, différenciation</p></div>
+      <div class="part" style="--p:var(--c-ia)"><span class="n">4</span><span class="who">Au choix</span><b>Retour réflexif</b><p>A : oral en visio · B : audio ou vidéo sur le Digipad</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Préambule B · Grille -->
+<section class="slide" data-c="--ink">
+  <div class="eyebrow"><span class="chip">Préambule</span></div>
+  <h2>Comment c'est <em>évalué</em></h2>
+  <div class="grow">
+    <div class="g3">
+      <div class="gph"><p class="gt"><span>A</span>Conception</p><ol><li><i>1</i>Pertinence du numérique</li><li><i>2</i>Démarche, éthique, droit</li><li><i>3</i>Public, compétences CRCN</li></ol></div>
+      <div class="gph"><p class="gt"><span>B</span>Mise en œuvre</p><ol><li><i>4</i>Matériel et plan B</li><li><i>5</i>Accompagnement, différenciation</li><li><i>6</i>Objectifs atteints, traces</li><li><i>7</i>Écart prévu / réalisé</li></ol></div>
+      <div class="gph"><p class="gt"><span>C</span>Retour réflexif</p><ol><li><i>8</i>Communication, compétences développées</li></ol></div>
+    </div>
+    <div class="levels"><span class="lv">Niveau 1 · Attendu</span><span class="arrow">→</span><span class="lv x">Niveau 2 · Expert</span></div>
+    <p class="footnote"><a class="cta" href="https://missdclassroom.github.io/MEEF2-TP/" target="_blank" rel="noopener">Consigne et grille complète : missdclassroom.github.io/MEEF2-TP</a></p>
   </div>
 </section>
 
@@ -418,7 +465,7 @@ p{margin:0}
 <nav class="bar-nav" aria-label="Navigation des diapositives">
   <button class="navb" id="prev" type="button" aria-label="Diapositive précédente">←</button>
   <div class="pips" id="pips"></div>
-  <span class="count" id="count">1 / 12</span>
+  <span class="count" id="count">1 / 14</span>
   <button class="navb" id="next" type="button" aria-label="Diapositive suivante">→</button>
   <button class="navb" id="fs" type="button" aria-label="Plein écran">⛶</button>
 </nav>
@@ -460,7 +507,7 @@ p{margin:0}
 
   // Fleur
   var NS="http://www.w3.org/2000/svg", svg=document.getElementById("flower");
-  var petals=[["Bloom","--c-bloom",3],["21e siècle","--c-c21",4],["SAMR","--c-samr",5],["Outils","--c-outils",6],["RGPD","--c-rgpd",7],["Pix · CRCN","--c-pix",8],["IA","--c-ia",9]];
+  var petals=[["Bloom","--c-bloom",5],["21e siècle","--c-c21",6],["SAMR","--c-samr",7],["Outils","--c-outils",8],["RGPD","--c-rgpd",9],["Pix · CRCN","--c-pix",10],["IA","--c-ia",11]];
   var defs=document.createElementNS(NS,"defs");
   defs.innerHTML='<filter id="petalShadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#0b1a14" flood-opacity=".16"/></filter>'+
     '<filter id="heartShadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#0b1a14" flood-opacity=".28"/></filter>'+
@@ -486,7 +533,7 @@ p{margin:0}
   var h=document.createElementNS(NS,"g");h.setAttribute("class","heart");h.setAttribute("tabindex","0");h.setAttribute("role","button");h.setAttribute("aria-label","Objectif langagier");
   var c=document.createElementNS(NS,"circle");c.setAttribute("r","62");h.appendChild(c);
   [["Objectif",-4],["langagier",18]].forEach(function(a){var t=document.createElementNS(NS,"text");t.setAttribute("y",a[1]);t.textContent=a[0];h.appendChild(t)});
-  h.addEventListener("click",function(){show(1)});
+  h.addEventListener("click",function(){show(3)});
   svg.appendChild(h);
 
   // Points de frugalité
