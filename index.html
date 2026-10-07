@@ -193,6 +193,13 @@ p{margin:0}
 .levels .lv.x{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .levels .arrow{font-size:24px;color:var(--muted)}
 .cta{display:inline-block;font-weight:600;font-size:18px;text-decoration:none;padding:12px 24px;border-radius:999px;background:var(--ink);color:var(--bg)}
+.tools6{max-width:1180px;width:100%;margin:0 auto;gap:14px}
+.tools6 .card{padding:16px 22px;gap:4px}
+.tools6 .card p{font-size:17px}
+.warn{max-width:1180px;width:100%;margin:0 auto;display:flex;gap:16px;align-items:center;background:color-mix(in srgb,var(--c-rgpd) 10%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c-rgpd) 40%,var(--line));border-radius:20px;padding:16px 22px}
+.warn .ic{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;background:var(--c-rgpd);color:var(--surface);font-weight:800;font-size:22px}
+.warn p{font-size:20px}
+.warn b{color:var(--c-rgpd)}
 /* Barre de navigation */
 .bar-nav{position:fixed;left:0;right:0;bottom:0;padding:10px 40.0px calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:5}
 .pips{flex:1;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-width:0}
@@ -352,13 +359,15 @@ p{margin:0}
   <div class="eyebrow"><span class="chip">Repère 4</span></div>
   <h2>Les <em>outils</em> communs</h2>
   <div class="grow tools">
-    <div class="cards c5">
+    <div class="cards c3 tools6">
       <div class="card"><span class="big">GAR</span><p>ressources du ministère ou de la collectivité, via l'ENT</p></div>
       <div class="card"><span class="big">Apps Éducation</span><p>outils du ministère</p></div>
       <div class="card"><span class="big">La Digitale</span><p>libres, sans compte élève</p></div>
       <div class="card"><span class="big">LearningApps</span><p>pour les exerciseurs</p></div>
+      <div class="card"><span class="big">Mon Oral</span><p>s'enregistrer, se réécouter, déposer</p></div>
       <div class="card"><span class="big">IA générative</span><p>parcours guidés et différenciés</p></div>
     </div>
+    <div class="warn"><span class="ic">!</span><p><b>Attention</b> : outils conformes au RGPD, sans connexion élève (ou sécurisée via le GAR), <strong>modération impérative de l'enseignant.</strong></p></div>
     <div class="flow"><span>Faire émerger</span><i>→</i><span>Mutualiser</span><i>→</i><span>Produire</span><i>→</i><span>Partager</span></div>
     <p class="footnote">Peu d'outils, <strong>bien maîtrisés.</strong></p>
   </div>
